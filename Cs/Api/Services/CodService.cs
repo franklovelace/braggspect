@@ -13,24 +13,25 @@ public class CodService
     using var connection = new MySqlConnection(_connectionString);
     await connection.OpenAsync();
 
-    string sql = "SELECT * FROM data WHERE formula LIKE @formula LIMIT 5";
+    string sql = @"SELECT file, formula, commonname, year 
+                   FROM data 
+                   WHERE formula LIKE @formula OR commonname LIKE @formula 
+                   ORDER BY year DESC 
+                   LIMIT 10";
 
     using var command = new MySqlCommand(sql, connection);
     command.Parameters.AddWithValue("@formula", $"%{formula}%");
 
     using var reader = await command.ExecuteReaderAsync();
-    
-    var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
-    Console.WriteLine("Columnas encontradas en COD: " + string.Join(", ", columnNames));
-
     while (await reader.ReadAsync())
     {
-        var idValue = reader.GetValue(0); 
-        var formulaValue = reader["formula"]?.ToString() ?? "N/A";
+        var id = reader.GetInt32("file");
+        var f = reader.IsDBNull(reader.GetOrdinal("formula")) ? "?" : reader.GetString("formula");
+        var n = reader.IsDBNull(reader.GetOrdinal("commonname")) ? "Mineral" : reader.GetString("commonname");
+        var y = reader.IsDBNull(reader.GetOrdinal("year")) ? "" : reader.GetInt32("year").ToString();
         
-        results.Add($"Resultado: ID {idValue} - Formula: {formulaValue}");
+        results.Add($"[COD {id}] {f} - {n} ({y})");
     }
     return results;
 }
-
 }
