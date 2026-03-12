@@ -1,27 +1,48 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 
+const router = useRouter();
 const file = ref<File | null>(null);
 const kAlpha2Stripped = ref(false);
-const selectedAnode = ref('Cu'); 
+const selectedAnode = ref('Cu');
 const isProcessing = ref(false);
 
 const anodes = ['Cu', 'Mo', 'Co', 'Cr', 'Fe', 'W'];
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0]) file.value = target.files[0];
+  file.value = target.files?.[0] ?? null;
 };
 
 const startAnalysis = async () => {
   if (!file.value) return;
   isProcessing.value = true;
   
-  
-  setTimeout(() => {
+  const formData = new FormData();
+  formData.append('file', file.value);
+  formData.append('anode', selectedAnode.value);
+  formData.append('isStripped', kAlpha2Stripped.value.toString());
+
+  try {
+    const response = await axios.post('http://localhost:7071/api/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    const drxData = response.data;
+    
+    router.push({
+      path: '/analysis',
+      state: { drxData: JSON.stringify(drxData) }
+    });
+
+  } catch (error) {
+    console.error("Error en el flujo:", error);
+    alert("Hubo un error procesando el archivo.");
+  } finally {
     isProcessing.value = false;
-    alert(`Archivo: ${file.value?.name}\nÁnodo: ${selectedAnode.value}\nLimpiar K-a2: ${!kAlpha2Stripped.value}`);
-  }, 1000);
+  }
 };
 </script>
 
