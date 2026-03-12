@@ -49,12 +49,20 @@ const search = async () => {
         </div>
 
         <div class="grid grid-cols-3 gap-4">
-          <div v-for="val, key in {a:selected.a, b:selected.b, c:selected.c, α:selected.alpha, β:selected.beta, γ:selected.gamma}" 
-               class="bg-slate-800 p-4 rounded border border-slate-700 text-center">
-            <p class="text-xs text-slate-500 uppercase">{{ key }}</p>
-            <p class="text-xl font-mono text-blue-200">{{ val || '—' }}</p>
-          </div>
-        </div>
+  <div v-for="val, key in { a: selected.a, b: selected.b, c: selected.c }" 
+       class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center relative overflow-hidden group">
+    <p class="text-[10px] text-blue-500 font-bold uppercase mb-1 tracking-tighter">{{ key }} (Å)</p>
+    <p class="text-2xl font-mono text-white">{{ val?.toFixed(3) || '—' }}</p>
+    <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-600 opacity-20 group-hover:opacity-100 transition-opacity"></div>
+  </div>
+
+  <div v-for="val, key in { 'α': selected.alpha, 'β': selected.beta, 'γ': selected.gamma }" 
+       class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center relative overflow-hidden group">
+    <p class="text-[10px] text-orange-500 font-bold uppercase mb-1 tracking-tighter">{{ key }} (°)</p>
+    <p class="text-2xl font-mono text-white">{{ val?.toFixed(2) || '—' }}</p>
+    <div class="absolute bottom-0 left-0 w-full h-1 bg-orange-600 opacity-20 group-hover:opacity-100 transition-opacity"></div>
+  </div>
+</div>
       </div>
 
       <div v-else class="flex-1 flex items-center justify-center text-slate-600">
