@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Api.Services;
+using Api.Parsers;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication() 
@@ -11,6 +12,8 @@ var host = new HostBuilder()
         services.ConfigureFunctionsApplicationInsights();
 
         services.AddSingleton<CodService>();
+        services.AddSingleton<CsvParser>();
+
     })
     .Build();
 
