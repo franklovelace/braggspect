@@ -8,7 +8,7 @@ public class CodResult
     public int? Year { get; set; }
     public double? A { get; set; }
     public double? B { get; set; }
-    public double? C { get; set; }
+    public double? C { get; set; }//oh, ya las habia hecho nulleables, perfecto
     public double? Alpha { get; set; }
     public double? Beta { get; set; }
     public double? Gamma { get; set; }
