@@ -69,11 +69,11 @@ const searchInCOD = () => {
           
           <div class="flex justify-between items-end border-b border-slate-700/50 pb-2 mb-2">
             <span class="text-sm text-slate-400">Ángulo 2θ</span>
-            <span class="text-lg text-white font-mono">{{ peak.twoTheta.toFixed(2) }}°</span>
+            <span class="text-lg text-white font-mono">{{ peak.two_theta.toFixed(2) }}°</span>
           </div>
           <div class="flex justify-between items-end border-b border-slate-700/50 pb-2 mb-2">
             <span class="text-sm text-slate-400">Distancia (d)</span>
-            <span class="text-2xl text-orange-400 font-mono font-bold">{{ peak.dSpacing.toFixed(4) }} <span class="text-sm">Å</span></span>
+            <span class="text-2xl text-orange-400 font-mono font-bold">{{ peak.d_spacing.toFixed(4) }} <span class="text-sm">Å</span></span>
           </div>
           <div class="flex justify-between items-end">
             <span class="text-sm text-slate-400">Intensidad</span>
@@ -87,7 +87,7 @@ const searchInCOD = () => {
       <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
         <span class="w-3 h-3 bg-green-500 rounded-full"></span> Candidatos Encontrados
       </h2>
-      <p class="text-slate-400 italic">Aquí conectaremos el Query de C# para buscar estructuras con d1 ≈ {{ drxData.topPeaks[0].dSpacing.toFixed(2) }} Å y d2 ≈ {{ drxData.topPeaks[1].dSpacing.toFixed(2) }} Å...</p>
+      <p class="text-slate-400 italic">Aquí conectaremos el Query de C# para buscar estructuras con d1 ≈ {{ drxData.topPeaks[0].d_spacing.toFixed(2) }} Å y d2 ≈ {{ drxData.topPeaks[1].d_spacing.toFixed(2) }} Å...</p>
     </div>
 
   </div>
