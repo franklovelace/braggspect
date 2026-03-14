@@ -6,8 +6,15 @@ import numpy as np
 from core.constants import ANODES
 from core.stripping import rachinger_correction
 from core.hanawalt import extract_top_peaks
+from core.simulator import simulate_theoretical
 
 app = FastAPI(title="DRX Math Engine")
+
+@app.get("/api/math/simulate")
+def simulate(a: float, b: float, c: float, alpha: float, beta: float, gamma: float, anode: str, tmin: float, tmax: float):
+    wl = ANODES.get(anode, ANODES["Cu"])["ka1"]
+    x, y = simulate_theoretical(a, b, c, alpha, beta, gamma, wl, tmin, tmax)
+    return {"x": x, "y": y}
 
 class DrxRequest(BaseModel):
     two_theta: List[float]
