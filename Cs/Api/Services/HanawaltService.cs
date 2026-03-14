@@ -13,23 +13,27 @@ public class HanawaltService
         var results = new List<CodResult>();
 
         if (dValues == null || dValues.Count == 0) return results;
-        double d1 = dValues[0];
+         double d1 = dValues[0];
+         double d2 = dValues.Count > 1 ? dValues[1] : 0;
 
         using var connection = new MySqlConnection(_connectionString);
         try 
         {
             await connection.OpenAsync();
             
-            string sql = @"
-                SELECT file, formula, commonname, year, a, b, c, alpha, beta, gamma 
-                FROM data 
-                WHERE (a BETWEEN @min AND @max OR b BETWEEN @min AND @max OR c BETWEEN @min AND @max)
-                ORDER BY year DESC 
-                LIMIT 20";
+             string sql = @"
+        SELECT file, formula, commonname, year, a, b, c, alpha, beta, gamma 
+        FROM data 
+        WHERE (a BETWEEN @d1min AND @d1max OR b BETWEEN @d1min AND @d1max OR c BETWEEN @d1min AND @d1max)
+        AND (@d2 = 0 OR a BETWEEN @d2min AND @d2max OR b BETWEEN @d2min AND @d2max OR c BETWEEN @d2min AND @d2max)
+        ORDER BY year DESC LIMIT 20";
 
-            using var command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@min", d1 - tolerance);
-            command.Parameters.AddWithValue("@max", d1 + tolerance);
+             using var command = new MySqlCommand(sql, connection);
+    command.Parameters.AddWithValue("@d1min", d1 - tolerance);
+    command.Parameters.AddWithValue("@d1max", d1 + tolerance);
+    command.Parameters.AddWithValue("@d2", d2);
+    command.Parameters.AddWithValue("@d2min", d2 - (tolerance * 2)); 
+    command.Parameters.AddWithValue("@d2max", d2 + (tolerance * 2));
 
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
