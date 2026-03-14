@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Api.Services;
 using Api.Parsers;
+using System.Text.Json; // Add this using directive
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication() 
@@ -15,8 +16,13 @@ var host = new HostBuilder()
         services.AddSingleton<CsvParser>();
         services.AddSingleton<HanawaltService>(); 
 
-
+        services.Configure<JsonSerializerOptions>(options =>
+        {
+            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        });
     })
+
+    
     .Build();
 
 host.Run();
