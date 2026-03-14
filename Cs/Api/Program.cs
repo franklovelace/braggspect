@@ -13,6 +13,8 @@ var host = new HostBuilder()
 
         services.AddSingleton<CodService>();
         services.AddSingleton<CsvParser>();
+        services.AddSingleton<HanawaltService>(); 
+
 
     })
     .Build();
