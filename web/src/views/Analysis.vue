@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import XrdChart from '../components/XrDChart.vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 const drxData = ref<any>(null);
 const step = ref(1); 
+const router = useRouter();
 
 onMounted(() => {
   const stateData = history.state.drxData;
@@ -16,8 +19,21 @@ const analyzePeaks = () => {
   step.value = 2; 
 };
 
-const searchInCOD = () => {
-  step.value = 3;
+const searchInCOD = async () => {
+  if (!drxData.value?.topPeaks) return;
+
+  const dValues = drxData.value.topPeaks.map((p: any) => p.d_spacing);
+
+  try {
+    const response = await axios.post('http://localhost:7071/api/search/hanawalt', dValues);
+    
+    router.push({
+      path: '/candidates',
+      state: { candidates: JSON.stringify(response.data) }
+    });
+  } catch (error) {
+    alert("Error: No se pudo acceder a la tabla de índices de la COD.");
+  }
 };
 </script>
 
