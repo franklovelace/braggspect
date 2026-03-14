@@ -20,23 +20,27 @@ const analyzePeaks = () => {
 };
 
 const searchInCOD = async () => {
-  if (!drxData.value) return;
-
-  localStorage.setItem('current_drx_data', JSON.stringify(drxData.value));
+  if (!drxData.value?.topPeaks) return;
 
   const dValues = drxData.value.topPeaks.map((p: any) => p.d_spacing);
 
   try {
     const response = await axios.post('http://localhost:7071/api/search/hanawalt', dValues);
     
+    console.log("%c --- REPORTE DE BÚSQUEDA HANAWALT ---", "color: #38bdf8; font-weight: bold;");
+    console.log("Pico Principal (d1):", dValues[0], "Å");
+    console.log("Total de candidatos recibidos:", response.data.length);
+    console.log("Candidatos:", response.data);
+    
     router.push({
       path: '/candidates',
       state: { 
-        candidates: JSON.stringify(response.data)
+        candidates: JSON.stringify(response.data),
+        drxData: JSON.stringify(drxData.value)
       }
     });
   } catch (error) {
-    alert("Error en el servidor de búsqueda");
+    console.error("Error en el servidor de búsqueda:", error);
   }
 };
 </script>
