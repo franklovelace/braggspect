@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Api.Services;
 using Api.Parsers;
-using System.Text.Json; // Add this using directive
+using System.Text.Json;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication() 
