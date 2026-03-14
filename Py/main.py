@@ -8,14 +8,27 @@ from core.constants import ANODES
 from core.stripping import rachinger_correction
 from core.hanawalt import extract_top_peaks
 from core.simulator import simulate_theoretical
+from core.scoring import calculate_fast_match
+
+app = FastAPI(title="DRX Math Engine")
+
+@app.post("/api/math/fast-match")
+def fast_match(data: dict):
+    x = np.array(data['x'])
+    y = np.array(data['y'])
+    candidates = data['candidates']
+    anode = data['anode']
+    wl = ANODES.get(anode, ANODES["Cu"])["ka1"]
+    
+    scored_list = calculate_fast_match(x, y, candidates, wl)
+    
+    return scored_list
 
 class DrxRequest(BaseModel):
     anode: str
     two_theta: List[float]
     intensity: List[float]
     is_stripped: bool
-
-app = FastAPI(title="DRX Math Engine")
 
 app.add_middleware(
     CORSMiddleware,
