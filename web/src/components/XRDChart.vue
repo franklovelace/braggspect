@@ -5,7 +5,8 @@ import * as echarts from 'echarts';
 const props = defineProps<{
   twoTheta: number[],
   intensity: number[],
-  title?: string
+  title?: string,
+  theoreticalData?: {x: number[], y: number[]}
 }>();
 
 const chartRef = ref<HTMLElement | null>(null);
@@ -43,20 +44,23 @@ const getOptions = () => ({
     splitLine: { lineStyle: { color: '#334155', type: 'dashed' } },
     axisLabel: { color: '#94a3b8' }
   },
-  series: [{
+  series: [
+  {
     name: 'Experimental',
     type: 'line',
-    showSymbol: false,
-    sampling: 'lttb', // Algoritmo para manejar miles de puntos sin lag
     data: props.twoTheta.map((val, i) => [val, props.intensity[i]]),
-    lineStyle: { color: '#38bdf8', width: 1.5 },
-    areaStyle: {
-      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-        { offset: 0, color: 'rgba(56, 189, 248, 0.2)' },
-        { offset: 1, color: 'rgba(56, 189, 248, 0)' }
-      ])
-    }
-  }]
+    lineStyle: { color: '#38bdf8', width: 1.5 }, 
+    showSymbol: false,
+    sampling: 'lttb'
+  },
+  ...(props.theoreticalData ? [{
+    name: 'Teórico (COD)',
+    type: 'line',
+    data: props.theoreticalData?.x?.map((val, i) => [val, props.theoreticalData?.y?.[i]]) ?? [],
+    lineStyle: { color: '#ef4444', width: 2, type: 'solid' }, 
+    showSymbol: false
+  }] : [])
+]
 });
 
 const initChart = () => {

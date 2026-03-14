@@ -20,7 +20,9 @@ const analyzePeaks = () => {
 };
 
 const searchInCOD = async () => {
-  if (!drxData.value?.topPeaks) return;
+  if (!drxData.value) return;
+
+  localStorage.setItem('current_drx_data', JSON.stringify(drxData.value));
 
   const dValues = drxData.value.topPeaks.map((p: any) => p.d_spacing);
 
@@ -29,10 +31,12 @@ const searchInCOD = async () => {
     
     router.push({
       path: '/candidates',
-      state: { candidates: JSON.stringify(response.data) }
+      state: { 
+        candidates: JSON.stringify(response.data)
+      }
     });
   } catch (error) {
-    alert("Error: No se pudo acceder a la tabla de índices de la COD.");
+    alert("Error en el servidor de búsqueda");
   }
 };
 </script>
