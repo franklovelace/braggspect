@@ -5,7 +5,9 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 const drxData = ref<any>(null);
-const step = ref(1); 
+const step = ref(1);
+const loading = ref(false);
+const loadingStep = ref("");
 const router = useRouter();
 
 onMounted(() => {
@@ -20,27 +22,38 @@ const analyzePeaks = () => {
 };
 
 const searchInCOD = async () => {
-  if (!drxData.value?.topPeaks) return;
+  if (!drxData.value) return;
 
-  const dValues = drxData.value.topPeaks.map((p: any) => p.d_spacing);
+  loading.value = true;
+  loadingStep.value = "Ejecutando Pipeline Adaptativo (C# + Python)...";
+
+  const dValuesList = drxData.value.topPeaks.map((p: any) => {
+    return Number(p.d_spacing || p.dSpacing || p.DSpacing || 0);
+  }).filter((v: number) => v > 0); 
+
+  const payload = {
+    dValues: dValuesList,
+    x: Array.from(drxData.value.twoTheta || []), 
+    y: Array.from(drxData.value.intensity || []),
+    anode: String(drxData.value.anode || 'Cu')
+  };
 
   try {
-    const response = await axios.post('http://localhost:7071/api/search/hanawalt', dValues);
+    const response = await axios.post('http://localhost:7071/api/search/hanawalt', payload);
     
-    console.log("%c --- REPORTE DE BÚSQUEDA HANAWALT ---", "color: #38bdf8; font-weight: bold;");
-    console.log("Pico Principal (d1):", dValues[0], "Å");
-    console.log("Total de candidatos recibidos:", response.data.length);
-    console.log("Candidatos:", response.data);
-    
+    localStorage.setItem('current_drx_data', JSON.stringify(drxData.value));
+
     router.push({
       path: '/candidates',
       state: { 
-        candidates: JSON.stringify(response.data),
-        drxData: JSON.stringify(drxData.value)
+        candidates: JSON.stringify(response.data) 
       }
     });
   } catch (error) {
-    console.error("Error en el servidor de búsqueda:", error);
+    console.error("Error en el pipeline:", error);
+    alert("El servidor rechazó los datos o Python no responde.");
+  } finally {
+    loading.value = false;
   }
 };
 </script>
