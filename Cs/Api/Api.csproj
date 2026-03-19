@@ -19,5 +19,9 @@
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
     <PackageReference Include="System.Text.Json" Version="10.0.4" />
   </ItemGroup>
-
+<ItemGroup>
+    <None Update="HanawaltIndex.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
